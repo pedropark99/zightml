@@ -14,13 +14,34 @@ pub fn print_char(chr: u8) void {
     std.debug.print("{c}\n", .{chr});
 }
 
-pub fn tokenize(input_string: []const u8) !void {
-    for (input_string) |chr| {
-        print_char(chr);
-    }
-}
 
+
+const ParserCache = struct {
+    current_index: usize,
+    current_char: u8,
+};
 
 pub fn main() !void {
-    try tokenize(html_text);
+    var tokens:[500][]const u8 = undefined;
+    var current_index:usize = 0;
+    var current_char:u8 = html_text[0];
+
+    var token_index:usize = 0;
+    var lexeme_begin:usize = 0;
+    while (current_index < html_text.len) {
+
+        if (current_char == '<') {
+            tokens[token_index] = html_text[lexeme_begin..current_index];
+            token_index = token_index + 1;
+            lexeme_begin = current_index + 1;
+        }
+
+        current_index = current_index + 1;
+        current_char = html_text[current_index];
+    }
+
+
+    for (tokens) |token| {
+        std.debug.print("{s}", .{token});
+    }
 }
