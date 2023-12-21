@@ -24,6 +24,22 @@ const ParserCache = struct {
     }
 };
 
+const Tree = struct {
+    root: Node,
+};
+
+const Node = struct {
+    data: i32,
+    parent: ?*Node,
+    left: ?*Node,
+    right: ?*Node,
+};
+
+const ParserCache = struct {
+    ast: Tree,
+    current_index: usize,
+};
+
 const KeyValuePair = struct {
     key: *const [30]u8,
     value: *const [100]u8,

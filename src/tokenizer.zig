@@ -14,28 +14,30 @@ pub fn print_char(chr: u8) void {
     std.debug.print("{c}\n", .{chr});
 }
 
-const Tree = struct {
-    root: Node,
+const TokenPosition = struct {
+    start_index: u64,
+    end_index: u64,
 };
 
-const Node = struct {
-    data: i32,
-    parent: ?*Node,
-    left: ?*Node,
-    right: ?*Node,
-};
+pub fn tokenizer(input_string: []const u8) void {
+    var tokens = std.ArrayList(TokenPosition).init(std.heap.page_allocator);
 
-const ParserCache = struct {
-    ast: Tree,
-    current_index: usize,
-};
+    var last_end_index: u64 = 0;
+    for (input_string, 0..) |char, index| {
+        if (char == '<' or char == '>') {
+            if (last_end_index != index) {
+                try tokens.append(TokenPosition{ .start_index = last_end_index, .end_index = index });
+            }
+
+            // include the '<' or '>' character as a token:
+            try tokens.append(TokenPosition{ .start_index = index, .end_index = index });
+            last_end_index = index + 1;
+        }
+    }
+
+    return tokens;
+}
 
 pub fn main() !void {
-    var tree = Tree{ .root = Node{
-        .data = 1,
-        .parent = null,
-        .left = null,
-        .right = null,
-    } };
-    _ = tree;
+    tokenizer(html_text);
 }
